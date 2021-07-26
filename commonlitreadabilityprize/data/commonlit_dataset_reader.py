@@ -18,7 +18,7 @@ class CommonlitDatasetReader(DatasetReader):
     def __init__(
         self,
         tokenizer: Tokenizer,
-        token_indexers: Dict[str, TokenIndexer],
+        token_indexers: Optional[Dict[str, TokenIndexer]] = None,
     ) -> None:
 
         super().__init__()
