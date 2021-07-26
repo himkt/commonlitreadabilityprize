@@ -5,11 +5,11 @@
     },
     vocabulary: {
         "pretrained_files": {
-            "tokens": "./glove.6B.100d.txt",
+            "tokens": "../input/glove-vec/glove.6B.100d.word2vec",
         },
     },
-    train_data_path: "data/processed_train.csv",
-    validation_data_path: "data/processed_valid.csv",
+    train_data_path: "./processed_train.csv",
+    validation_data_path: "./processed_valid.csv",
     model: {
         type: "baseline",
         excerpt_embedder: {
@@ -17,7 +17,7 @@
             token_embedders: {
                 tokens: {
                     embedding_dim: 100,
-                    pretrained_file: "./glove.6B.100d.txt"
+                    pretrained_file: "../input/glove-vec/glove.6B.100d.word2vec"
                 }
             }
         },

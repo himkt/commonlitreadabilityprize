@@ -3,17 +3,17 @@
         type: "commonlit_reader",
         tokenizer: {
             type: "pretrained_transformer",
-            model_name: "roberta-base",
+            model_name: "../input/roberta-base",
         },
         token_indexers: {
             tokens: {
                 type: "pretrained_transformer",
-                model_name: "roberta-base",
+                model_name: "../input/roberta-base",
             },
         },
     },
-    train_data_path: "data/processed_train.csv",
-    validation_data_path: "data/processed_valid.csv",
+    train_data_path: "./processed_train.csv",
+    validation_data_path: "./processed_valid.csv",
     model: {
         type: "baseline",
         excerpt_embedder: {
@@ -21,13 +21,13 @@
             token_embedders: {
                 tokens: {
                     type: "pretrained_transformer",
-                    model_name: "roberta-base",
+                    model_name: "../input/roberta-base",
                 },
             },
         },
         excerpt_encoder: {
             type: "bert_pooler",
-            pretrained_model: "roberta-base",
+            pretrained_model: "../input/roberta-base",
         }
     },
     trainer: {
