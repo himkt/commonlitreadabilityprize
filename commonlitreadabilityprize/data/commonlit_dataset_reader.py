@@ -8,6 +8,7 @@ from allennlp.data.fields import ArrayField, TextField
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.token_indexers.token_indexer import TokenIndexer
+from allennlp.data.tokenizers.token_class import Token
 import pandas
 import numpy
 from overrides import overrides
@@ -18,13 +19,17 @@ class CommonlitDatasetReader(DatasetReader):
     def __init__(
         self,
         tokenizer: Tokenizer,
-        token_indexers: Optional[Dict[str, TokenIndexer]] = None,
+        excerpt_token_indexers: Optional[Dict[str, TokenIndexer]] = None,
+        hostname_token_indexers: Optional[Dict[str, TokenIndexer]] = None,
     ) -> None:
 
         super().__init__()
 
         self.tokenizer = tokenizer
-        self.token_indexers: Dict[str, TokenIndexer] = token_indexers or {
+        self.excerpt_token_indexers: Dict[str, TokenIndexer] = excerpt_token_indexers or {
+            "tokens": SingleIdTokenIndexer(),
+        }
+        self.hostname_token_indexers: Dict[str, TokenIndexer] = hostname_token_indexers or {
             "tokens": SingleIdTokenIndexer(),
         }
 
@@ -38,16 +43,19 @@ class CommonlitDatasetReader(DatasetReader):
 
         for _, row in dataframe.iterrows():
             excerpt = row.excerpt
+            hostname = row.hostname
             target = row.target if hasattr(row, "target") else None
-            instances.append(self.text_to_instance(excerpt, target))
+            instances.append(self.text_to_instance(excerpt, hostname, target))
 
         return instances
 
     @overrides
-    def text_to_instance(self, excerpt: str, target: Optional[float] = None) -> Instance:
-        tokens = self.tokenizer.tokenize(excerpt)
+    def text_to_instance(self, excerpt: str, hostname: str, target: Optional[float] = None) -> Instance:
+        excerpt_tokens = self.tokenizer.tokenize(excerpt)
+        hostname_tokens = [Token(text=hostname)]
         fields: MutableMapping[str, Field[Any]] = {
-            "excerpt": TextField(tokens),
+            "excerpt": TextField(excerpt_tokens),
+            "hostname": TextField(hostname_tokens),
         }
         if target is not None:
             fields["target"] = ArrayField(numpy.asarray(target, dtype=numpy.float32))
@@ -55,4 +63,6 @@ class CommonlitDatasetReader(DatasetReader):
 
     def apply_token_indexers(self, instance: Instance) -> None:
         assert isinstance(instance.fields["excerpt"], TextField)
-        instance.fields["excerpt"].token_indexers = self.token_indexers
+        instance.fields["excerpt"].token_indexers = self.excerpt_token_indexers
+        assert isinstance(instance.fields["hostname"], TextField)
+        instance.fields["hostname"].token_indexers = self.hostname_token_indexers

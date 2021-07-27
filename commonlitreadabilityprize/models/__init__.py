@@ -1,1 +1,1 @@
-from commonlitreadabilityprize.models.baseline import BaselineRegressor  # noqa
+from commonlitreadabilityprize.models.naive import NaiveRegressor  # noqa

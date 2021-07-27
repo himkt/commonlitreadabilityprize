@@ -11,7 +11,7 @@
     train_data_path: "./processed_train.csv",
     validation_data_path: "./processed_valid.csv",
     model: {
-        type: "baseline",
+        type: "naive",
         excerpt_embedder: {
             type: "basic",
             token_embedders: {
